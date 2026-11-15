@@ -150,11 +150,11 @@
   .row { display: flex; align-items: center; gap: 10px; }
   label.field-label { font-size: 12px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.03em; display: block; margin-bottom: 6px; }
   .field-label.section-title-lg { font-size: 24px; color: var(--text); text-transform: none; letter-spacing: normal; margin-bottom: 10px; font-weight: 700; }
-  input[type="date"], input[type="text"], select {
+  input[type="date"], input[type="text"], input[type="number"], select {
     width: 100%; padding: 10px 12px; border-radius: 10px; border: 1px solid var(--border);
     background: var(--surface-2); color: var(--text); font-size: 15px; font-family: inherit;
   }
-  input[type="date"]:focus, input[type="text"]:focus, select:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+  input[type="date"]:focus, input[type="text"]:focus, input[type="number"]:focus, select:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
 
   .auto-note { font-size: 12px; color: var(--text-muted); margin-top: 6px; margin-bottom: 14px; }
 
@@ -203,6 +203,8 @@
     display: flex; align-items: center; justify-content: center; cursor: pointer; padding: 0;
   }
   .done-x:active { background: rgba(0,0,0,0.28); }
+  .done-chip .rc-boxes { color: rgba(0,0,0,0.55); font-size: 10px; margin-top: 1px; }
+  .done-chip .rc-dur   { color: rgba(0,0,0,0.75); font-size: 10px; font-weight: 700; margin-top: 1px; }
   .btn { display: block; width: 100%; padding: 12px 0; border-radius: 10px; border: none; font-size: 15px; font-weight: 700; cursor: pointer; margin-top: 12px; }
   .btn-primary { background: var(--accent); color: var(--accent-text); }
   .btn-primary:disabled { opacity: 0.5; }
@@ -223,11 +225,8 @@
   }
   .history-chip .rc-name { color: #1a1a1a; font-size: 13px; font-weight: 700; line-height: 1.1; white-space: nowrap; }
   .history-chip .rc-code { color: rgba(0,0,0,0.6); font-size: 9px; margin-top: 1px; }
-  .team-header { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 10px; }
-  .emp-card { border: 1px solid var(--border); border-radius: 12px; padding: 12px; margin-bottom: 10px; background: var(--surface-2); }
-  .emp-name { font-weight: 700; font-size: 14px; }
-  .emp-time { font-size: 11px; color: var(--text-muted); }
 
+  /* Team view sizing: bigger avatar + wider route chips, scoped so History stays compact. */
   #teamList .emp-avatar {
     width: 56px;
     height: 56px;
@@ -238,7 +237,7 @@
     align-items: center;
     justify-content: center;
     font-weight: 700;
-    font-size: 26px;
+    font-size: 20px;
     flex-shrink: 0;
     overflow: hidden;
   }
@@ -247,12 +246,16 @@
     display: block;
   }
   #teamList .history-chip {
-    padding: 8px 8px;
+    padding: 8px 11px;
     min-width: 68px;
   }
   #teamList .history-chip .rc-name { font-size: 15px; }
   #teamList .history-chip .rc-code { font-size: 10px; }
-  
+
+  .team-header { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 10px; }
+  .emp-card { border: 1px solid var(--border); border-radius: 12px; padding: 12px; margin-bottom: 10px; background: var(--surface-2); }
+  .emp-name { font-weight: 700; font-size: 14px; }
+  .emp-time { font-size: 11px; color: var(--text-muted); }
   .count-pill { font-size: 12px; color: var(--text-muted); background: var(--surface-2); border: 1px solid var(--border); border-radius: 999px; padding: 4px 10px; white-space: nowrap; }
 
   .acc-section { border-top: 1px solid var(--border-faint, var(--border)); background: transparent; opacity: 1; }
@@ -373,16 +376,16 @@
 
   <!-- TEAM VIEW -->
   <div id="viewTeam" style="display:none;">
-      <div class="team-header">
-        <div style="flex:1;">
-          <label class="field-label" data-t="filterByDay">Filter by day</label>
-          <input type="date" id="teamDateInput">
-        </div>
-        <div class="count-pill" id="teamCount">0 submitted</div>
+    <div class="team-header">
+      <div style="flex:1;">
+        <label class="field-label" data-t="filterByDay">Filter by day</label>
+        <input type="date" id="teamDateInput">
       </div>
-      <div id="teamList" class="spinner-note">Loading...</div>
+      <div class="count-pill" id="teamCount">0 submitted</div>
     </div>
+    <div id="teamList" class="spinner-note">Loading...</div>
   </div>
+</div>
 
 <div class="drawer-overlay" id="menuOverlay" onclick="closeMenu()">
   <div class="drawer" onclick="event.stopPropagation()">
@@ -424,6 +427,19 @@
     <div class="confirm-btns">
       <button class="btn" id="confirmCancel" onclick="closeConfirm()" style="background: var(--surface-2); color: var(--text); border: 1px solid var(--border);">Cancel</button>
       <button class="btn btn-primary" id="confirmOk" onclick="confirmRemove()" style="background: var(--danger); color:#fff;">Remove</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay center" id="boxesOverlay">
+  <div class="modal-card" style="max-width:360px;" onclick="event.stopPropagation()">
+    <div class="modal-header"><span>How many boxes?</span></div>
+    <div style="font-size:13px; color:var(--text-muted); margin-bottom:12px;" id="boxesRouteLabel"></div>
+    <input type="number" id="boxesInput" inputmode="numeric" min="0" placeholder="0"
+      style="width:100%; padding:12px 14px; border-radius:10px; border:1px solid var(--border); background:var(--surface-2); color:var(--text); font-size:16px;">
+    <div class="confirm-btns">
+      <button class="btn" id="boxesCancel" style="background: var(--surface-2); color: var(--text); border: 1px solid var(--border);">Cancel</button>
+      <button class="btn btn-primary" id="boxesOk">Start route</button>
     </div>
   </div>
 </div>
@@ -623,7 +639,13 @@ async function loadTodayRoutes() {
       .select("*").eq("user_id", myId).eq("date", selectedDate).maybeSingle();
     if (error) throw error;
     if (data) {
-      todayRoutes = Array.isArray(data.routes) ? data.routes : [];
+      const raw = Array.isArray(data.routes) ? data.routes : [];
+      todayRoutes = raw.map(rt => ({
+        code: rt.code,
+        label: rt.label || "",
+        boxes: typeof rt.boxes === "number" ? rt.boxes : null,
+        started_at: rt.started_at || null
+      }));
       currentDocDayType = data.day_type || null;
     }
   } catch (e) {
@@ -650,10 +672,18 @@ function renderTodayTags() {
     const tag = document.createElement("div");
     tag.className = "done-chip";
     tag.style.setProperty("--sel", color);
+
+    const timeStr = r.started_at
+      ? new Date(r.started_at).toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit" })
+      : "";
+    const boxesText = (typeof r.boxes === "number") ? (r.boxes + " boxes") : "";
+
     tag.innerHTML =
       '<button class="done-x" aria-label="Remove">&times;</button>' +
       '<span class="rc-name">' + (r.label || "—") + '</span>' +
-      '<span class="rc-code">' + r.code + '</span>';
+      '<span class="rc-code">' + r.code + '</span>' +
+      (boxesText ? '<span class="rc-boxes">' + boxesText + '</span>' : '') +
+      (timeStr ? '<span class="rc-dur">' + timeStr + '</span>' : '');
     tag.querySelector(".done-x").onclick = (e) => { e.stopPropagation(); askRemove(r); };
     wrap.appendChild(tag);
   });
@@ -736,7 +766,7 @@ async function saveTodayRoutes() {
   saveInFlight = false;
 }
 
-function addRouteToDay() {
+async function addRouteToDay() {
   const statusEl = document.getElementById("statusMsg");
   statusEl.textContent = "";
   statusEl.className = "status-msg";
@@ -745,23 +775,77 @@ function addRouteToDay() {
     statusEl.className = "status-msg err";
     return;
   }
+  if (pickedRoutes.length > 1) {
+    statusEl.textContent = "Add routes one at a time so timing can be tracked.";
+    statusEl.className = "status-msg err";
+    return;
+  }
   if (!db || !myId) {
     statusEl.textContent = T("noStorage");
     statusEl.className = "status-msg err";
     return;
   }
-  let addedCount = 0;
-  pickedRoutes.forEach(r => {
-    if (!todayRoutes.some(x => x.code === r.code)) { todayRoutes.push({ code: r.code, label: r.label }); addedCount++; }
+  const r = pickedRoutes[0];
+  if (todayRoutes.some(x => x.code === r.code)) {
+    statusEl.textContent = T("alreadyAdded");
+    statusEl.className = "status-msg err";
+    return;
+  }
+
+  const boxes = await askBoxes(r.label || r.code);
+  if (boxes === null) return; // cancelled
+
+  todayRoutes.push({
+    code: r.code,
+    label: r.label,
+    boxes: boxes,
+    started_at: Date.now()
   });
+
   pickedRoutes = [];
   document.getElementById("routeSearch").value = "";
   renderTodayTags();
   renderRouteGrid();
   updateAddButtonState();
-  statusEl.textContent = addedCount > 0 ? T("addedPick") : T("alreadyAdded");
-  statusEl.classList.add(addedCount > 0 ? "ok" : "err");
-  if (addedCount > 0) saveTodayRoutes();
+  statusEl.textContent = T("addedPick");
+  statusEl.classList.add("ok");
+  await saveTodayRoutes();
+}
+
+function askBoxes(routeName) {
+  return new Promise((resolve) => {
+    const overlay = document.getElementById("boxesOverlay");
+    const input   = document.getElementById("boxesInput");
+    const labelEl = document.getElementById("boxesRouteLabel");
+    const btnOk     = document.getElementById("boxesOk");
+    const btnCancel = document.getElementById("boxesCancel");
+
+    labelEl.textContent = routeName;
+    input.value = "";
+    overlay.classList.add("open");
+    setTimeout(() => input.focus(), 50);
+
+    const ok = () => {
+      const v = parseInt(input.value, 10);
+      if (!isFinite(v) || v < 0) { input.focus(); return; }
+      done(v);
+    };
+    const cancel = () => done(null);
+    const onKey = (e) => {
+      if (e.key === "Enter")  { e.preventDefault(); ok(); }
+      if (e.key === "Escape") { e.preventDefault(); cancel(); }
+    };
+    function done(result) {
+      btnOk.removeEventListener("click", ok);
+      btnCancel.removeEventListener("click", cancel);
+      input.removeEventListener("keydown", onKey);
+      overlay.classList.remove("open");
+      resolve(result);
+    }
+    btnOk.addEventListener("click", ok);
+    btnCancel.addEventListener("click", cancel);
+    input.addEventListener("keydown", onKey);
+  });
 }
 
 function fmtDate(dateStr) {
@@ -864,7 +948,7 @@ function makeInitialAvatar(initial) {
   span.textContent = initial;
   return span;
 }
-  
+
 function toggleViewTab() { switchTab(currentTab === "mine" ? "team" : "mine"); }
 function toggleDayType() { setDayType(dayType === "even" ? "odd" : "even"); }
 
@@ -920,7 +1004,6 @@ function subscribeTeam() {
     .subscribe();
 }
 
-// Load the best available name from the profile, then user metadata, then email prefix.
 async function getBestDisplayName(user) {
   if (!user) return "";
   if (db) {
@@ -983,7 +1066,7 @@ async function updateAccountCircle() {
       if (data.display_name) { displayName = data.display_name; myName = data.display_name; }
       if (data.avatar_url) avatarUrl = data.avatar_url;
     }
-  } catch (e) { /* ignore */ }
+  } catch (e) { console.error("Could not load avatar for header:", e); }
   if (!displayName && currentAccount) displayName = currentAccount.email || "";
   const initial = (displayName || "?").charAt(0).toUpperCase();
   btn.title = displayName || "Account";
@@ -1347,7 +1430,7 @@ async function addManualRoute() {
   const docDay = existing ? existing.dayType : dayType;
   await saveRouteArea(docDay, code, label, area);
   if (!todayRoutes.some(r => r.code === code)) {
-    todayRoutes.push({ code: code, label: label, manual: true });
+    todayRoutes.push({ code: code, label: label, boxes: null, started_at: Date.now() });
     await saveTodayRoutes();
     renderTodayTags();
   }
@@ -1492,12 +1575,41 @@ async function downloadStats() {
     const personKey = d => d.user_id || ("legacy:" + (d.person_name || "Unknown"));
     const nameOf = d => profiles[d.user_id] || d.person_name || T("statsUnknown");
     const locale = currentLang === "fi" ? "fi-FI" : "en-US";
-    const weekday = iso => { const [y, m, d] = iso.split("-").map(Number); return new Date(y, m - 1, d).toLocaleDateString(locale, { weekday: "long" }); };
 
     valid.sort((a, b) => a.date.localeCompare(b.date) || nameOf(a).localeCompare(nameOf(b)));
 
-const byDay = [[T("statsColDate"), T("statsColPerson"), T("statsColCount"), T("statsColRoutes")]];
-    valid.forEach(d => byDay.push([d.date, nameOf(d), d.routes.length, d.routes.map(routeText).join(", ")]));
+    const byDay = [["Date", "Person", "Route", "Boxes", "Completed (~)", "Duration (min)", "Boxes / hour"]];
+    valid.forEach(d => {
+      const routes = (d.routes || []).slice().sort(
+        (a, b) => (a.started_at || 0) - (b.started_at || 0)
+      );
+      routes.forEach((rt, idx) => {
+        const started = rt.started_at || 0;
+        const next = routes[idx + 1];
+        const nextStart = next && next.started_at ? next.started_at : 0;
+
+        let completedStr = "", durMin = "", bph = "";
+        if (started && nextStart && nextStart > started) {
+          // Next route's start time minus ~5 min for the handoff.
+          const approxEnd = nextStart - 5 * 60 * 1000;
+          completedStr = "~" + new Date(approxEnd).toLocaleTimeString(locale, { hour: "2-digit", minute: "2-digit" });
+          durMin = Math.round((approxEnd - started) / 60000);
+          if (typeof rt.boxes === "number" && rt.boxes > 0 && durMin > 0) {
+            bph = Math.round((rt.boxes * 60 / durMin) * 10) / 10;
+          }
+        }
+
+        byDay.push([
+          d.date,
+          nameOf(d),
+          rt.label ? rt.label + " (" + rt.code + ")" : rt.code,
+          typeof rt.boxes === "number" ? rt.boxes : "",
+          completedStr,
+          durMin,
+          bph
+        ]);
+      });
+    });
 
     const dates = Array.from(new Set(valid.map(d => d.date))).sort();
     const people = Array.from(new Set(valid.map(personKey))).sort((a, b) => {
@@ -1518,7 +1630,7 @@ const byDay = [[T("statsColDate"), T("statsColPerson"), T("statsColCount"), T("s
     });
 
     const bytes = buildXlsx([
-      { name: T("statsSheetByDay"), rows: byDay, widths: [12, 24, 14, 70], wrap: true },
+      { name: T("statsSheetByDay"), rows: byDay, widths: [12, 22, 22, 10, 14, 14, 14], wrap: true },
       { name: T("statsSheetPerPerson"), rows: matrix, widths: [24].concat(dates.map(() => 30), [12, 16]), freezeCols: 1, wrap: true }
     ]);
     const blob = new Blob([bytes], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
