@@ -192,19 +192,50 @@
 
   .selected-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
   .done-chip {
-    position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center;
-    background: var(--sel, #ffc9e1); border-radius: 12px; padding: 10px 18px 8px 10px; min-width: 78px;
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    background: var(--sel, #ffc9e1);
+    border-radius: 12px;
+    padding: 10px 24px 10px 14px;
+    min-width: 118px;
   }
-  .done-chip .rc-name { color: #1a1a1a; font-size: 18px; font-weight: 700; line-height: 1.1; white-space: nowrap; }
+  .done-chip .dc-route {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    line-height: 1.1;
+  }
+  .done-chip .rc-name { color: #1a1a1a; font-size: 18px; font-weight: 700; white-space: nowrap; }
   .done-chip .rc-code { color: rgba(0,0,0,0.6); font-size: 11px; margin-top: 2px; }
+  .done-chip .dc-meta {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+  }
+  .done-chip .rc-boxes {
+    color: rgba(0,0,0,0.85);
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1;
+    white-space: nowrap;
+  }
+  .done-chip .rc-dur {
+    color: rgba(0,0,0,0.55);
+    font-size: 11px;
+    line-height: 1;
+    white-space: nowrap;
+  }
   .done-x {
     position: absolute; top: 3px; right: 3px; width: 18px; height: 18px; border-radius: 50%;
     border: none; background: rgba(0,0,0,0.16); color: #1a1a1a; font-size: 13px; line-height: 1;
     display: flex; align-items: center; justify-content: center; cursor: pointer; padding: 0;
   }
   .done-x:active { background: rgba(0,0,0,0.28); }
-  .done-chip .rc-boxes { color: rgba(0,0,0,0.55); font-size: 10px; margin-top: 1px; }
-  .done-chip .rc-dur   { color: rgba(0,0,0,0.75); font-size: 10px; font-weight: 700; margin-top: 1px; }
   .btn { display: block; width: 100%; padding: 12px 0; border-radius: 10px; border: none; font-size: 15px; font-weight: 700; cursor: pointer; margin-top: 12px; }
   .btn-primary { background: var(--accent); color: var(--accent-text); }
   .btn-primary:disabled { opacity: 0.5; }
@@ -226,7 +257,7 @@
   .history-chip .rc-name { color: #1a1a1a; font-size: 13px; font-weight: 700; line-height: 1.1; white-space: nowrap; }
   .history-chip .rc-code { color: rgba(0,0,0,0.6); font-size: 9px; margin-top: 1px; }
 
-  /* Team view sizing: bigger avatar + wider route chips, scoped so History stays compact. */
+  /* Team view sizing */
   #teamList .emp-avatar {
     width: 56px;
     height: 56px;
@@ -322,7 +353,7 @@
   <div class="header-spacer-block"></div>
   <div class="header-row" id="headerRow">
     <div class="date-box">
-      <span class="dbx-label">Date</span>
+      <span class="dbx-label" id="dateLabel">Date</span>
       <input type="date" id="dateInput">
     </div>
     <button class="account-circle-btn" id="accountCircleBtn" onclick="goToAccount()" aria-label="Account"></button>
@@ -345,9 +376,9 @@
   <!-- MY DAY VIEW -->
   <div id="viewMine">
     <div class="signin-prompt" id="signInPrompt" style="display:none;">
-      <h3>Sign in to track your routes</h3>
-      <p>Your routes are saved to your account and visible to your team.</p>
-      <a href="account.html">Sign in / Create account</a>
+      <h3 id="signInPromptTitle">Sign in to track your routes</h3>
+      <p id="signInPromptText">Your routes are saved to your account and visible to your team.</p>
+      <a href="account.html" id="signInPromptBtn">Sign in / Create account</a>
     </div>
 
     <div class="work-area">
@@ -369,7 +400,7 @@
       <button class="btn btn-primary" id="submitBtn" onclick="addRouteToDay()">Add route</button>
       <div class="status-msg" id="statusMsg" style="margin-bottom: 28px;"></div>
 
-      <label class="field-label section-title-lg" style="margin-top:16px;">Today's routes</label>
+      <label class="field-label section-title-lg" id="todaysRoutesLabel" style="margin-top:16px;">Today's routes</label>
       <div class="selected-tags" id="todayTags"></div>
     </div>
   </div>
@@ -378,12 +409,12 @@
   <div id="viewTeam" style="display:none;">
     <div class="team-header">
       <div style="flex:1;">
-        <label class="field-label" data-t="filterByDay">Filter by day</label>
+        <label class="field-label" id="filterByDayLabel" data-t="filterByDay">Filter by day</label>
         <input type="date" id="teamDateInput">
       </div>
       <div class="count-pill" id="teamCount">0 submitted</div>
     </div>
-    <div id="teamList" class="spinner-note">Loading...</div>
+    <div id="teamList" class="spinner-note"></div>
   </div>
 </div>
 
@@ -392,7 +423,7 @@
     <div class="menu-item" id="menuHistory" onclick="openHistory()">Recent history</div>
     <div class="menu-item" id="menuStats" onclick="openStats()">Statistics</div>
     <div class="lang-row">
-      <span class="field-label" style="margin:0;">Language</span>
+      <span class="field-label" id="langLabel" style="margin:0;">Language</span>
       <div class="lang-toggle">
         <div class="lang-btn" id="langEn" onclick="setLanguage('en')">English</div>
         <div class="lang-btn" id="langFi" onclick="setLanguage('fi')">Suomi</div>
@@ -416,7 +447,7 @@
 <div class="modal-overlay" id="historyOverlay" onclick="if(event.target.id==='historyOverlay')closeHistory()">
   <div class="modal-card" onclick="event.stopPropagation()">
     <div class="modal-header"><span id="historyTitle">Recent history</span><button class="modal-close" onclick="closeHistory()">&times;</button></div>
-    <div id="historyList" class="spinner-note">Loading...</div>
+    <div id="historyList" class="spinner-note"></div>
   </div>
 </div>
 
@@ -433,10 +464,9 @@
 
 <div class="modal-overlay center" id="boxesOverlay">
   <div class="modal-card" style="max-width:360px;" onclick="event.stopPropagation()">
-    <div class="modal-header"><span>How many boxes?</span></div>
+    <div class="modal-header"><span id="boxesTitle">How many boxes?</span></div>
     <div style="font-size:13px; color:var(--text-muted); margin-bottom:12px;" id="boxesRouteLabel"></div>
-    <input type="number" id="boxesInput" inputmode="numeric" min="0" placeholder="0"
-      style="width:100%; padding:12px 14px; border-radius:10px; border:1px solid var(--border); background:var(--surface-2); color:var(--text); font-size:16px;">
+    <select id="boxesInput" aria-label="Box count" style="width:100%; padding:12px 14px; border-radius:10px; border:1px solid var(--border); background:var(--surface-2); color:var(--text); font-size:16px;"></select>
     <div class="confirm-btns">
       <button class="btn" id="boxesCancel" style="background: var(--surface-2); color: var(--text); border: 1px solid var(--border);">Cancel</button>
       <button class="btn btn-primary" id="boxesOk">Start route</button>
@@ -525,6 +555,7 @@ let pickedRoutes = [];
 let todayRoutes = [];
 let currentTab = "mine";
 let unsubMine = null, unsubTeam = null;
+let lastTeamCount = 0;
 
 function todayStr() {
   const d = new Date();
@@ -663,7 +694,7 @@ function renderTodayTags() {
   const wrap = document.getElementById("todayTags");
   wrap.innerHTML = "";
   if (todayRoutes.length === 0) {
-    wrap.innerHTML = '<span style="color:var(--text-muted); font-size:13px;">No routes added yet for this day</span>';
+    wrap.innerHTML = '<span style="color:var(--text-muted); font-size:13px;">' + T("noRoutesYet") + '</span>';
     return;
   }
   todayRoutes.forEach(r => {
@@ -676,14 +707,18 @@ function renderTodayTags() {
     const timeStr = r.started_at
       ? new Date(r.started_at).toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit" })
       : "";
-    const boxesText = (typeof r.boxes === "number") ? (r.boxes + " boxes") : "";
+    const boxesText = (typeof r.boxes === "number") ? ("x" + r.boxes) : "";
 
     tag.innerHTML =
       '<button class="done-x" aria-label="Remove">&times;</button>' +
-      '<span class="rc-name">' + (r.label || "—") + '</span>' +
-      '<span class="rc-code">' + r.code + '</span>' +
-      (boxesText ? '<span class="rc-boxes">' + boxesText + '</span>' : '') +
-      (timeStr ? '<span class="rc-dur">' + timeStr + '</span>' : '');
+      '<div class="dc-route">' +
+        '<span class="rc-name">' + (r.label || "—") + '</span>' +
+        '<span class="rc-code">' + r.code + '</span>' +
+      '</div>' +
+      '<div class="dc-meta">' +
+        (boxesText ? '<span class="rc-boxes">' + boxesText + '</span>' : '') +
+        (timeStr ? '<span class="rc-dur">' + timeStr + '</span>' : '') +
+      '</div>';
     tag.querySelector(".done-x").onclick = (e) => { e.stopPropagation(); askRemove(r); };
     wrap.appendChild(tag);
   });
@@ -716,7 +751,12 @@ function toggleMenu() {
   const isOpen = document.getElementById("menuOverlay").classList.contains("open");
   if (isOpen) closeMenu(); else openMenu();
 }
-function openHistory() { closeMenu(); document.getElementById("historyOverlay").classList.add("open"); }
+function openHistory() {
+  closeMenu();
+  document.getElementById("historyOverlay").classList.add("open");
+  const el = document.getElementById("historyList");
+  if (!el.textContent.trim()) el.textContent = T("loading");
+}
 function closeHistory() { document.getElementById("historyOverlay").classList.remove("open"); }
 
 function goToAccount() {
@@ -776,7 +816,7 @@ async function addRouteToDay() {
     return;
   }
   if (pickedRoutes.length > 1) {
-    statusEl.textContent = "Add routes one at a time so timing can be tracked.";
+    statusEl.textContent = T("addOneAtATime");
     statusEl.className = "status-msg err";
     return;
   }
@@ -795,6 +835,8 @@ async function addRouteToDay() {
   const boxes = await askBoxes(r.label || r.code);
   if (boxes === null) return; // cancelled
 
+  try { localStorage.setItem("routeTracker_lastBoxes", String(boxes)); } catch (e) {}
+
   todayRoutes.push({
     code: r.code,
     label: r.label,
@@ -812,6 +854,21 @@ async function addRouteToDay() {
   await saveTodayRoutes();
 }
 
+function populateBoxesOptions() {
+  const sel = document.getElementById("boxesInput");
+  if (!sel || sel.dataset.populated) return;
+  let html = "";
+  for (let i = 1; i <= 500; i++) html += '<option value="' + i + '">' + i + '</option>';
+  sel.innerHTML = html;
+  let def = 20;
+  try {
+    const saved = parseInt(localStorage.getItem("routeTracker_lastBoxes"), 10);
+    if (isFinite(saved) && saved >= 1 && saved <= 500) def = saved;
+  } catch (e) {}
+  sel.value = String(def);
+  sel.dataset.populated = "1";
+}
+
 function askBoxes(routeName) {
   return new Promise((resolve) => {
     const overlay = document.getElementById("boxesOverlay");
@@ -820,14 +877,14 @@ function askBoxes(routeName) {
     const btnOk     = document.getElementById("boxesOk");
     const btnCancel = document.getElementById("boxesCancel");
 
+    populateBoxesOptions();
     labelEl.textContent = routeName;
-    input.value = "";
     overlay.classList.add("open");
-    setTimeout(() => input.focus(), 50);
+    setTimeout(() => { try { input.focus(); } catch (e) {} }, 50);
 
     const ok = () => {
       const v = parseInt(input.value, 10);
-      if (!isFinite(v) || v < 0) { input.focus(); return; }
+      if (!isFinite(v) || v < 1) return;
       done(v);
     };
     const cancel = () => done(null);
@@ -857,7 +914,7 @@ function fmtDate(dateStr) {
 function renderHistory(docs) {
   const el = document.getElementById("historyList");
   if (!docs.length) {
-    el.innerHTML = '<div class="empty-note">No submissions yet.</div>';
+    el.innerHTML = '<div class="empty-note">' + T("historyNoSubmissions") + '</div>';
     return;
   }
   docs.sort((a,b) => b.date.localeCompare(a.date));
@@ -882,9 +939,10 @@ function renderHistory(docs) {
 async function renderTeamList(docs) {
   const el = document.getElementById("teamList");
   const countEl = document.getElementById("teamCount");
-  countEl.textContent = docs.length + " submitted";
+  lastTeamCount = docs.length;
+  countEl.textContent = T("teamSubmitted").replace("{n}", String(lastTeamCount));
   if (!docs.length) {
-    el.innerHTML = '<div class="empty-note">No one has submitted for this day yet.</div>';
+    el.innerHTML = '<div class="empty-note">' + T("teamNoSubmissions") + '</div>';
     return;
   }
   const ids = Array.from(new Set(docs.map(d => d.user_id).filter(Boolean)));
@@ -976,11 +1034,11 @@ async function refreshTeam() {
   if (!db || !myId) return;
   const dateEl = document.getElementById("teamDateInput");
   const date = dateEl.value || todayStr();
-  document.getElementById("teamList").innerHTML = '<div class="spinner-note">Loading...</div>';
+  document.getElementById("teamList").innerHTML = '<div class="spinner-note">' + T("loading") + '</div>';
   const { data, error } = await db.from("submissions").select("*").eq("date", date).limit(200);
   if (error) {
     console.error("Could not load team submissions:", error);
-    document.getElementById("teamList").innerHTML = '<div class="empty-note">Could not load team data.</div>';
+    document.getElementById("teamList").innerHTML = '<div class="empty-note">' + T("teamLoadError") + '</div>';
     return;
   }
   await renderTeamList(data || []);
@@ -1034,8 +1092,8 @@ async function startAppForUser(user) {
     if (unsubMine) db.removeChannel(unsubMine);
     if (unsubTeam) db.removeChannel(unsubTeam);
     unsubMine = unsubTeam = null;
-    document.getElementById("historyList").innerHTML = '<div class="empty-note">Sign in to view your history.</div>';
-    document.getElementById("teamList").innerHTML = '<div class="empty-note">Sign in to view team submissions.</div>';
+    document.getElementById("historyList").innerHTML = '<div class="empty-note">' + T("historySignIn") + '</div>';
+    document.getElementById("teamList").innerHTML = '<div class="empty-note">' + T("teamSignIn") + '</div>';
     document.getElementById("statusMsg").textContent = "";
     document.getElementById("statusMsg").className = "status-msg";
     return;
@@ -1053,7 +1111,7 @@ async function updateAccountCircle() {
   if (!btn) return;
   if (!myId) {
     btn.classList.remove("logged-in");
-    btn.title = "Sign in";
+    btn.title = T("login");
     btn.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>';
     return;
   }
@@ -1069,7 +1127,7 @@ async function updateAccountCircle() {
   } catch (e) { console.error("Could not load avatar for header:", e); }
   if (!displayName && currentAccount) displayName = currentAccount.email || "";
   const initial = (displayName || "?").charAt(0).toUpperCase();
-  btn.title = displayName || "Account";
+  btn.title = displayName || T("account");
   if (avatarUrl) {
     btn.innerHTML = "";
     const img = document.createElement("img");
@@ -1092,6 +1150,7 @@ async function init() {
   setMenuBtnIcon(false);
   updateViewToggle();
   setDayType(weekdayIsEven(selectedDate) ? "even" : "odd", true);
+  populateBoxesOptions();
 
   if (!db || !db.auth) {
     console.error("Route Tracker could not initialize Supabase:", supabaseInitError);
@@ -1578,7 +1637,7 @@ async function downloadStats() {
 
     valid.sort((a, b) => a.date.localeCompare(b.date) || nameOf(a).localeCompare(nameOf(b)));
 
-    const byDay = [["Date", "Person", "Route", "Boxes", "Completed (~)", "Duration (min)", "Boxes / hour"]];
+    const byDay = [[T("statsColDate"), T("statsColPerson"), T("statsColRoute"), T("statsColBoxes"), T("statsColCompleted"), T("statsColDuration"), T("statsColBoxesPerHour")]];
     valid.forEach(d => {
       const routes = (d.routes || []).slice().sort(
         (a, b) => (a.started_at || 0) - (b.started_at || 0)
@@ -1590,7 +1649,6 @@ async function downloadStats() {
 
         let completedStr = "", durMin = "", bph = "";
         if (started && nextStart && nextStart > started) {
-          // Next route's start time minus ~5 min for the handoff.
           const approxEnd = nextStart - 5 * 60 * 1000;
           completedStr = "~" + new Date(approxEnd).toLocaleTimeString(locale, { hour: "2-digit", minute: "2-digit" });
           durMin = Math.round((approxEnd - started) / 60000);
@@ -1656,8 +1714,8 @@ const STRINGS = {
   en: {
     tabMine: "My day", tabTeam: "Team view",
     dateLabel: "Date", evenDay: "Even day", oddDay: "Odd day",
-    completedRoutesTitle: "Completed routes", searchPlaceholder: "Search route number or name...",
-    addRoute: "Add route", adding: "Adding...", todaysRoutes: "Today's routes",
+    searchPlaceholder: "Search route number or name...",
+    addRoute: "Add route", todaysRoutes: "Today's routes", noRoutesYet: "No routes added yet for this day",
     recentHistory: "Recent history", filterByDay: "Filter by day",
     login: "Log in", createAccount: "Create account", logOut: "Log out",
     account: "Account", language: "Language",
@@ -1665,18 +1723,38 @@ const STRINGS = {
     statsBadRange: "Choose a valid date range.", statsTooLong: "Choose a range of up to one year.", statsBuilding: "Building the Excel file...",
     statsNoData: "No routes were recorded in that period.", statsSaved: "Excel file ready.", statsDeclined: "Download cancelled.",
     statsUnavailable: "Downloads aren't available in this view.", statsUnknown: "Unknown",
-    statsColDate: "Date", statsColDay: "Day", statsColPerson: "Person", statsColNumbers: "Numbers", statsColCount: "Routes done", statsColRoutes: "Routes",
+    statsColDate: "Date", statsColPerson: "Person", statsColRoute: "Route", statsColBoxes: "Boxes",
+    statsColCompleted: "Completed (~)", statsColDuration: "Duration (min)", statsColBoxesPerHour: "Boxes / hour",
     statsColDays: "Days worked", statsColTotal: "Total routes", statsSheetByDay: "Routes by day", statsSheetPerPerson: "Per person",
-    oddNumbers: "Odd numbers", evenNumbers: "Even numbers", fillBoth: "Enter both email and password.", noStorage: "Not connected yet — try again in a moment.",
+    oddNumbers: "Odd numbers", evenNumbers: "Even numbers",
+    noStorage: "Not connected yet — try again in a moment.",
     genericError: "Something went wrong. Try again.",
-    pickFirst: "Tap a route first, then press Add.", menu: "Menu", removeTitle: "Remove route?", removeText: "Remove {code} from today's routes?", cancel: "Cancel", remove: "Remove", addedPick: "Added. Pick your next route.", routeExists: "Already in system", pickToUpdate: "Choose an area to update it.", updatedRoute: "Route updated.", ungrouped: "Ungrouped", chooseArea: "Choose an area.", areaPh: "Choose area...", manualCodePh: "Route number", manualNamePh: "Route name (optional)", addCompleted: "Add as completed",
-    enterRouteNumber: "Enter a route number.", alreadyAdded: "Already on today's list.", addedManual: "Route added as completed."
+    pickFirst: "Tap a route first, then press Add.",
+    addOneAtATime: "Add routes one at a time so timing can be tracked.",
+    removeTitle: "Remove route?", removeText: "Remove {code} from today's routes?",
+    cancel: "Cancel", remove: "Remove", addedPick: "Added. Pick your next route.",
+    routeExists: "Already in system", pickToUpdate: "Choose an area to update it.",
+    updatedRoute: "Route updated.", ungrouped: "Ungrouped", chooseArea: "Choose an area.",
+    areaPh: "Choose area...", manualCodePh: "Route number", manualNamePh: "Route name (optional)", addCompleted: "Add as completed",
+    enterRouteNumber: "Enter a route number.", alreadyAdded: "Already on today's list.", addedManual: "Route added as completed.",
+    loading: "Loading...",
+    teamSubmitted: "{n} submitted",
+    teamNoSubmissions: "No one has submitted for this day yet.",
+    teamLoadError: "Could not load team data.",
+    historyNoSubmissions: "No submissions yet.",
+    historySignIn: "Sign in to view your history.",
+    teamSignIn: "Sign in to view team submissions.",
+    signInPromptTitle: "Sign in to track your routes",
+    signInPromptText: "Your routes are saved to your account and visible to your team.",
+    signInPromptBtn: "Sign in / Create account",
+    howManyBoxes: "How many boxes?",
+    startRoute: "Start route"
   },
   fi: {
     tabMine: "Oma päivä", tabTeam: "Tiiminäkymä",
     dateLabel: "Päivämäärä", evenDay: "Parillinen päivä", oddDay: "Pariton päivä",
-    completedRoutesTitle: "Valmiit reitit", searchPlaceholder: "Hae reitin numeroa tai nimeä...",
-    addRoute: "Lisää reitti", adding: "Lisätään...", todaysRoutes: "Päivän reitit",
+    searchPlaceholder: "Hae reitin numeroa tai nimeä...",
+    addRoute: "Lisää reitti", todaysRoutes: "Päivän reitit", noRoutesYet: "Ei vielä lisättyjä reittejä tälle päivälle",
     recentHistory: "Viimeisimmät merkinnät", filterByDay: "Suodata päivän mukaan",
     login: "Kirjaudu sisään", createAccount: "Luo tili", logOut: "Kirjaudu ulos",
     account: "Tili", language: "Kieli",
@@ -1684,12 +1762,32 @@ const STRINGS = {
     statsBadRange: "Valitse kelvollinen ajanjakso.", statsTooLong: "Valitse enintään vuoden ajanjakso.", statsBuilding: "Luodaan Excel-tiedostoa...",
     statsNoData: "Valitulla ajanjaksolla ei ole merkittyjä reittejä.", statsSaved: "Excel-tiedosto valmis.", statsDeclined: "Lataus peruttu.",
     statsUnavailable: "Lataus ei ole käytettävissä tässä näkymässä.", statsUnknown: "Tuntematon",
-    statsColDate: "Päivämäärä", statsColDay: "Viikonpäivä", statsColPerson: "Henkilö", statsColNumbers: "Numerot", statsColCount: "Reittejä", statsColRoutes: "Reitit",
+    statsColDate: "Päivämäärä", statsColPerson: "Henkilö", statsColRoute: "Reitti", statsColBoxes: "Laatikot",
+    statsColCompleted: "Valmistunut (~)", statsColDuration: "Kesto (min)", statsColBoxesPerHour: "Laatikkoa / tunti",
     statsColDays: "Työpäiviä", statsColTotal: "Reittejä yhteensä", statsSheetByDay: "Reitit päivittäin", statsSheetPerPerson: "Henkilöittäin",
-    oddNumbers: "Parittomat numerot", evenNumbers: "Parilliset numerot", fillBoth: "Täytä sähköposti ja salasana.", noStorage: "Ei yhteyttä — yritä hetken kuluttua uudelleen.",
+    oddNumbers: "Parittomat numerot", evenNumbers: "Parilliset numerot",
+    noStorage: "Ei yhteyttä — yritä hetken kuluttua uudelleen.",
     genericError: "Jokin meni pieleen. Yritä uudelleen.",
-    pickFirst: "Valitse ensin reitti ja paina Lisää.", menu: "Valikko", removeTitle: "Poistetaanko reitti?", removeText: "Poistetaanko {code} päivän reiteistä?", cancel: "Peruuta", remove: "Poista", addedPick: "Lisätty. Valitse seuraava reitti.", routeExists: "Jo järjestelmässä", pickToUpdate: "Valitse alue päivittääksesi.", updatedRoute: "Reitti päivitetty.", ungrouped: "Ryhmittelemättömät", chooseArea: "Valitse alue.", areaPh: "Valitse alue...", manualCodePh: "Reitin numero", manualNamePh: "Reitin nimi (valinnainen)", addCompleted: "Lisää suoritettuna",
-    enterRouteNumber: "Anna reitin numero.", alreadyAdded: "Jo päivän listalla.", addedManual: "Reitti lisätty suoritettuna."
+    pickFirst: "Valitse ensin reitti ja paina Lisää.",
+    addOneAtATime: "Lisää reitit yksi kerrallaan, jotta ajoitus voidaan tallentaa.",
+    removeTitle: "Poistetaanko reitti?", removeText: "Poistetaanko {code} päivän reiteistä?",
+    cancel: "Peruuta", remove: "Poista", addedPick: "Lisätty. Valitse seuraava reitti.",
+    routeExists: "Jo järjestelmässä", pickToUpdate: "Valitse alue päivittääksesi.",
+    updatedRoute: "Reitti päivitetty.", ungrouped: "Ryhmittelemättömät", chooseArea: "Valitse alue.",
+    areaPh: "Valitse alue...", manualCodePh: "Reitin numero", manualNamePh: "Reitin nimi (valinnainen)", addCompleted: "Lisää suoritettuna",
+    enterRouteNumber: "Anna reitin numero.", alreadyAdded: "Jo päivän listalla.", addedManual: "Reitti lisätty suoritettuna.",
+    loading: "Ladataan...",
+    teamSubmitted: "{n} lähettänyt",
+    teamNoSubmissions: "Kukaan ei ole vielä lähettänyt tälle päivälle.",
+    teamLoadError: "Tiimitietojen lataus epäonnistui.",
+    historyNoSubmissions: "Ei vielä merkintöjä.",
+    historySignIn: "Kirjaudu sisään nähdäksesi historiansi.",
+    teamSignIn: "Kirjaudu sisään nähdäksesi tiimin merkinnät.",
+    signInPromptTitle: "Kirjaudu sisään seurataksesi reittejäsi",
+    signInPromptText: "Reittisi tallennetaan tiliisi ja näkyvät tiimillesi.",
+    signInPromptBtn: "Kirjaudu / Luo tili",
+    howManyBoxes: "Montako laatikkoa?",
+    startRoute: "Aloita reitti"
   }
 };
 function T(key) { return (STRINGS[currentLang] && STRINGS[currentLang][key]) || STRINGS.en[key] || key; }
@@ -1700,11 +1798,17 @@ function setLanguage(lang) {
   document.getElementById("langEn").classList.toggle("active", lang === "en");
   document.getElementById("langFi").classList.toggle("active", lang === "fi");
   applyLanguage();
+  // Refresh dynamic content so translations apply everywhere
+  if (myId && db) {
+    renderTodayTags();
+    if (document.getElementById("teamList")) refreshTeam();
+    if (document.getElementById("historyList") && document.getElementById("historyOverlay").classList.contains("open")) refreshMine();
+  }
 }
 
 function applyLanguage() {
   updateViewToggle();
-  document.querySelector('.date-box .dbx-label').textContent = T("dateLabel");
+  document.getElementById("dateLabel").textContent = T("dateLabel");
   document.getElementById("dayCountLabel").textContent = dayType === "odd" ? T("oddNumbers") : T("evenNumbers");
   document.getElementById("routeSearch").placeholder = T("searchPlaceholder");
   document.getElementById("submitBtn").textContent = T("addRoute");
@@ -1712,10 +1816,10 @@ function applyLanguage() {
   document.getElementById("manualName").placeholder = T("manualNamePh");
   document.getElementById("manualAddBtn").textContent = T("addCompleted");
   populateAreaOptions();
-  const todayLabel = document.querySelector('.work-area label.field-label');
-  if (todayLabel) todayLabel.textContent = T("todaysRoutes");
+  document.getElementById("todaysRoutesLabel").textContent = T("todaysRoutes");
   document.getElementById("menuHistory").textContent = T("recentHistory");
   document.getElementById("menuStats").textContent = T("statistics");
+  document.getElementById("langLabel").textContent = T("language");
   document.getElementById("statsTitle").textContent = T("statistics");
   document.getElementById("statsFromLabel").textContent = T("statsFrom");
   document.getElementById("statsToLabel").textContent = T("statsTo");
@@ -1724,8 +1828,26 @@ function applyLanguage() {
   document.getElementById("confirmTitle").textContent = T("removeTitle");
   document.getElementById("confirmCancel").textContent = T("cancel");
   document.getElementById("confirmOk").textContent = T("remove");
-  const filterLabel = document.querySelector('[data-t="filterByDay"]');
-  if (filterLabel) filterLabel.textContent = T("filterByDay");
+  document.getElementById("filterByDayLabel").textContent = T("filterByDay");
+  document.getElementById("boxesTitle").textContent = T("howManyBoxes");
+  document.getElementById("boxesCancel").textContent = T("cancel");
+  document.getElementById("boxesOk").textContent = T("startRoute");
+  document.getElementById("signInPromptTitle").textContent = T("signInPromptTitle");
+  document.getElementById("signInPromptText").textContent = T("signInPromptText");
+  document.getElementById("signInPromptBtn").textContent = T("signInPromptBtn");
+
+  // Team submitted pill — update if we have a count already
+  const countEl = document.getElementById("teamCount");
+  if (countEl && lastTeamCount >= 0) {
+    countEl.textContent = T("teamSubmitted").replace("{n}", String(lastTeamCount));
+  }
+  // Loading spinners (only if still empty)
+  const tl = document.getElementById("teamList");
+  if (tl && !tl.textContent.trim() && !tl.querySelector("div")) tl.textContent = T("loading");
+  const hl = document.getElementById("historyList");
+  if (hl && !hl.textContent.trim() && !hl.querySelector("div")) hl.textContent = T("loading");
+
+  updateAccountCircle();
 }
 
 function initAccountAndLanguage() {
@@ -1735,9 +1857,8 @@ function initAccountAndLanguage() {
   } catch(e) {}
   document.getElementById("langEn").classList.toggle("active", currentLang === "en");
   document.getElementById("langFi").classList.toggle("active", currentLang === "fi");
-  applyLanguage();
   currentAccount = null;
-  updateAccountCircle();
+  applyLanguage();
 }
 
 // ---------- Refresh profile on resume ----------
