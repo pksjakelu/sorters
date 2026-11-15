@@ -128,7 +128,6 @@
 
   <div id="loadingView" class="spinner-note">Loading…</div>
 
-  <!-- SIGNED OUT -->
   <div id="signedOutView" style="display:none;">
     <div id="authForms">
       <div class="acc-tabs">
@@ -176,7 +175,6 @@
     </div>
   </div>
 
-  <!-- SIGNED IN -->
   <div id="signedInView" style="display:none;">
     <div class="avatar-wrap">
       <div class="avatar-large" id="avatar"><span>?</span></div>
@@ -206,7 +204,6 @@
     <button class="btn btn-secondary" id="logoutBtn" onclick="signOut()" style="margin-top:10px;">Log out</button>
   </div>
 
-  <!-- PASSWORD RECOVERY -->
   <div id="recoveryView" style="display:none;">
     <div class="hint" id="recoveryHint" style="margin-top:0; margin-bottom:16px;">Enter a new password for your account.</div>
     <label class="field-label" id="newPasswordLabel">New password</label>
@@ -363,12 +360,10 @@ function applyLanguage() {
   document.getElementById("backToLoginLink").textContent = T("backToLogin");
 
   document.getElementById("confirmTitle").textContent = T("checkEmailTitle");
-  // Rebuild confirm text with current email
   const confirmEmailEl = document.getElementById("confirmEmail");
   const emailVal = confirmEmailEl ? confirmEmailEl.textContent : "";
   const confirmTextEl = document.getElementById("confirmText");
   if (confirmTextEl) {
-    // Preserve the strong email element inside
     confirmTextEl.innerHTML = T("checkEmailText").replace("{email}", '<strong id="confirmEmail"></strong>');
     const ce = document.getElementById("confirmEmail");
     if (ce) ce.textContent = emailVal;
@@ -388,7 +383,6 @@ function applyLanguage() {
   document.getElementById("newPassword2Label").textContent = T("confirmPassword");
   document.getElementById("recoveryBtn").textContent = T("updatePassword");
 
-  // Update subtitle depending on current view
   const sub = document.getElementById("pageSub");
   if (document.getElementById("recoveryView").style.display === "block") sub.textContent = T("subtitleRecovery");
   else if (document.getElementById("signedInView").style.display === "block") sub.textContent = T("subtitleSignedIn");
@@ -478,9 +472,6 @@ async function doSignup() {
     if (data.session) {
       setStatus("signupStatus", T("accountCreated"), "ok");
     } else {
-      const confirmEmailEl = document.getElementById("confirmEmail");
-      if (confirmEmailEl) confirmEmailEl.textContent = email;
-      // Rebuild confirm text to reflect current language + email
       const confirmTextEl = document.getElementById("confirmText");
       confirmTextEl.innerHTML = T("checkEmailText").replace("{email}", '<strong id="confirmEmail"></strong>');
       const ce = document.getElementById("confirmEmail");
