@@ -121,7 +121,7 @@
       <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4l-6 6 6 6"/></svg>
     </button>
     <div>
-      <div class="page-title">Account</div>
+      <div class="page-title" id="pageTitle">Account</div>
       <div class="page-sub" id="pageSub">Sign in or create an account</div>
     </div>
   </div>
@@ -137,31 +137,31 @@
       </div>
 
       <div id="loginForm">
-        <label class="field-label">Email</label>
+        <label class="field-label" id="loginEmailLabel">Email</label>
         <input type="email" id="loginEmail" placeholder="you@example.com" autocomplete="email">
-        <label class="field-label" style="margin-top:12px;">Password</label>
+        <label class="field-label" id="loginPasswordLabel" style="margin-top:12px;">Password</label>
         <input type="password" id="loginPassword" placeholder="••••••••" autocomplete="current-password">
         <button class="btn btn-primary" id="loginBtn" onclick="doLogin()">Log in</button>
-        <div class="link-btn" onclick="showForgot()">Forgot password?</div>
+        <div class="link-btn" id="forgotLink" onclick="showForgot()">Forgot password?</div>
         <div class="status-msg" id="loginStatus"></div>
       </div>
 
       <div id="signupForm" style="display:none;">
-        <label class="field-label">Email</label>
+        <label class="field-label" id="signupEmailLabel">Email</label>
         <input type="email" id="signupEmail" placeholder="you@example.com" autocomplete="email">
-        <label class="field-label" style="margin-top:12px;">Password</label>
+        <label class="field-label" id="signupPasswordLabel" style="margin-top:12px;">Password</label>
         <input type="password" id="signupPassword" placeholder="••••••••" autocomplete="new-password">
-        <div class="hint">At least 6 characters.</div>
+        <div class="hint" id="signupHint">At least 6 characters.</div>
         <button class="btn btn-primary" id="signupBtn" onclick="doSignup()">Create account</button>
         <div class="status-msg" id="signupStatus"></div>
       </div>
 
       <div id="forgotForm" style="display:none;">
-        <div class="hint" style="margin-top:0; margin-bottom:14px;">Enter your email address and we'll send you a link to reset your password.</div>
-        <label class="field-label">Email</label>
+        <div class="hint" id="forgotHint" style="margin-top:0; margin-bottom:14px;">Enter your email address and we'll send you a link to reset your password.</div>
+        <label class="field-label" id="forgotEmailLabel">Email</label>
         <input type="email" id="forgotEmail" placeholder="you@example.com" autocomplete="email">
         <button class="btn btn-primary" id="forgotBtn" onclick="doForgot()">Send reset link</button>
-        <div class="link-btn" onclick="setAuthMode('login')">Back to log in</div>
+        <div class="link-btn" id="backToLoginLink" onclick="setAuthMode('login')">Back to log in</div>
         <div class="status-msg" id="forgotStatus"></div>
       </div>
     </div>
@@ -169,10 +169,10 @@
     <div id="confirmView" style="display:none;">
       <div class="confirm-box">
         <div class="confirm-icon">✉️</div>
-        <div class="confirm-title">Check your email</div>
-        <div class="confirm-text">We've sent a confirmation link to <strong id="confirmEmail"></strong>. Click the link to activate your account, then come back and log in.</div>
+        <div class="confirm-title" id="confirmTitle">Check your email</div>
+        <div class="confirm-text" id="confirmText">We've sent a confirmation link to <strong id="confirmEmail"></strong>. Click the link to activate your account, then come back and log in.</div>
       </div>
-      <button class="btn btn-secondary" onclick="setAuthMode('login')" style="margin-top:16px;">Back to log in</button>
+      <button class="btn btn-secondary" id="backToLoginBtn" onclick="setAuthMode('login')" style="margin-top:16px;">Back to log in</button>
     </div>
   </div>
 
@@ -183,35 +183,35 @@
       <div>
         <div style="font-weight:700; font-size:16px;" id="displayName">Your profile</div>
         <div style="font-size:13px; color:var(--text-muted); margin-top:2px;" id="displayEmail"></div>
-        <label class="upload-label" style="margin-top:10px;">
+        <label class="upload-label" id="uploadLabel" style="margin-top:10px;">
           Change photo
           <input type="file" id="photoInput" accept="image/png,image/jpeg,image/webp">
         </label>
-        <div class="hint" style="margin-top:6px;">JPG, PNG or WebP, up to 5 MB.</div>
+        <div class="hint" id="photoHint" style="margin-top:6px;">JPG, PNG or WebP, up to 5 MB.</div>
       </div>
     </div>
 
-    <label class="field-label">First name</label>
+    <label class="field-label" id="firstNameLabel">First name</label>
     <input type="text" id="firstName" placeholder="First name" autocomplete="given-name" maxlength="60">
 
-    <label class="field-label" style="margin-top:12px;">Surname</label>
+    <label class="field-label" id="lastNameLabel" style="margin-top:12px;">Surname</label>
     <input type="text" id="lastName" placeholder="Surname" autocomplete="family-name" maxlength="60">
 
-    <label class="field-label" style="margin-top:12px;">Email</label>
+    <label class="field-label" id="emailLabel" style="margin-top:12px;">Email</label>
     <div class="email-display" id="profileEmail"></div>
 
     <button class="btn btn-primary" id="saveBtn" onclick="saveProfile()">Save changes</button>
     <div class="status-msg" id="profileStatus"></div>
 
-    <button class="btn btn-secondary" onclick="signOut()" style="margin-top:10px;">Log out</button>
+    <button class="btn btn-secondary" id="logoutBtn" onclick="signOut()" style="margin-top:10px;">Log out</button>
   </div>
 
   <!-- PASSWORD RECOVERY -->
   <div id="recoveryView" style="display:none;">
-    <div class="hint" style="margin-top:0; margin-bottom:16px;">Enter a new password for your account.</div>
-    <label class="field-label">New password</label>
+    <div class="hint" id="recoveryHint" style="margin-top:0; margin-bottom:16px;">Enter a new password for your account.</div>
+    <label class="field-label" id="newPasswordLabel">New password</label>
     <input type="password" id="newPassword" placeholder="••••••••" autocomplete="new-password">
-    <label class="field-label" style="margin-top:12px;">Confirm password</label>
+    <label class="field-label" id="newPassword2Label" style="margin-top:12px;">Confirm password</label>
     <input type="password" id="newPassword2" placeholder="••••••••" autocomplete="new-password">
     <button class="btn btn-primary" id="recoveryBtn" onclick="saveNewPassword()">Update password</button>
     <div class="status-msg" id="recoveryStatus"></div>
@@ -224,6 +224,177 @@ const SUPABASE_URL = "https://pdbtmsjimjsmuipkoszo.supabase.co";
 const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_cBTHQ8KJ3Sw5wJcRffYYdA_kE-qI-NS";
 const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
 
+let currentLang = "en";
+try { currentLang = localStorage.getItem("routeTracker_lang") || "en"; } catch (e) {}
+
+const STRINGS = {
+  en: {
+    pageTitle: "Account",
+    subtitleSignedOut: "Sign in or create an account",
+    subtitleSignedIn: "Your profile details",
+    subtitleRecovery: "Set a new password",
+    loading: "Loading…",
+    loginTab: "Log in",
+    signupTab: "Create account",
+    email: "Email",
+    password: "Password",
+    newPassword: "New password",
+    confirmPassword: "Confirm password",
+    loginBtn: "Log in",
+    signupBtn: "Create account",
+    forgotLink: "Forgot password?",
+    forgotHint: "Enter your email address and we'll send you a link to reset your password.",
+    sendResetBtn: "Send reset link",
+    backToLogin: "Back to log in",
+    checkEmailTitle: "Check your email",
+    checkEmailText: "We've sent a confirmation link to {email}. Click the link to activate your account, then come back and log in.",
+    signupHint: "At least 6 characters.",
+    changePhoto: "Change photo",
+    photoHint: "JPG, PNG or WebP, up to 5 MB.",
+    firstName: "First name",
+    surname: "Surname",
+    saveChanges: "Save changes",
+    logOut: "Log out",
+    updatePassword: "Update password",
+    yourProfile: "Your profile",
+    signingIn: "Signing in…",
+    signedIn: "Signed in.",
+    signingOut: "Signing out…",
+    saving: "Saving…",
+    profileSaved: "Profile saved.",
+    passwordUpdated: "Password updated. You're now signed in.",
+    resetSent: "Reset link sent. Check your email.",
+    photoSelected: "Photo selected. Save changes to upload it.",
+    recoveryHint: "Enter a new password for your account.",
+    emailInvalid: "Enter a valid email address.",
+    passwordRequired: "Enter your password.",
+    passwordTooShort: "Password must be at least 6 characters.",
+    passwordsMismatch: "Passwords do not match.",
+    nameRequired: "Enter both your first name and surname.",
+    photoTypeError: "Please choose a JPG, PNG or WebP image.",
+    photoSizeError: "The image must be 5 MB or smaller.",
+    loginError: "Could not log in.",
+    signupError: "Could not create account.",
+    resetError: "Could not send reset email.",
+    passwordUpdateError: "Could not update password.",
+    saveError: "Could not save your profile.",
+    accountCreated: "Account created and signed in.",
+    photoBucketError: "Upload succeeded but the image isn't reachable ({status}). Make sure the 'avatars' storage bucket is set to Public in Supabase."
+  },
+  fi: {
+    pageTitle: "Tili",
+    subtitleSignedOut: "Kirjaudu sisään tai luo tili",
+    subtitleSignedIn: "Profiilitietosi",
+    subtitleRecovery: "Aseta uusi salasana",
+    loading: "Ladataan…",
+    loginTab: "Kirjaudu sisään",
+    signupTab: "Luo tili",
+    email: "Sähköposti",
+    password: "Salasana",
+    newPassword: "Uusi salasana",
+    confirmPassword: "Vahvista salasana",
+    loginBtn: "Kirjaudu sisään",
+    signupBtn: "Luo tili",
+    forgotLink: "Unohditko salasanan?",
+    forgotHint: "Syötä sähköpostiosoitteesi, niin lähetämme sinulle linkin salasanan palauttamiseen.",
+    sendResetBtn: "Lähetä palautuslinkki",
+    backToLogin: "Takaisin kirjautumiseen",
+    checkEmailTitle: "Tarkista sähköpostisi",
+    checkEmailText: "Olemme lähettäneet vahvistuslinkin osoitteeseen {email}. Napsauta linkkiä aktivoidaksesi tilisi ja palaa sitten kirjautumaan sisään.",
+    signupHint: "Vähintään 6 merkkiä.",
+    changePhoto: "Vaihda kuva",
+    photoHint: "JPG, PNG tai WebP, enintään 5 Mt.",
+    firstName: "Etunimi",
+    surname: "Sukunimi",
+    saveChanges: "Tallenna muutokset",
+    logOut: "Kirjaudu ulos",
+    updatePassword: "Päivitä salasana",
+    yourProfile: "Profiilisi",
+    signingIn: "Kirjaudutaan sisään…",
+    signedIn: "Kirjauduttu sisään.",
+    signingOut: "Kirjaudutaan ulos…",
+    saving: "Tallennetaan…",
+    profileSaved: "Profiili tallennettu.",
+    passwordUpdated: "Salasana päivitetty. Olet nyt kirjautunut sisään.",
+    resetSent: "Palautuslinkki lähetetty. Tarkista sähköpostisi.",
+    photoSelected: "Kuva valittu. Tallenna muutokset ladataksesi sen.",
+    recoveryHint: "Anna tilillesi uusi salasana.",
+    emailInvalid: "Syötä kelvollinen sähköpostiosoite.",
+    passwordRequired: "Syötä salasanasi.",
+    passwordTooShort: "Salasanan on oltava vähintään 6 merkkiä.",
+    passwordsMismatch: "Salasanat eivät täsmää.",
+    nameRequired: "Syötä sekä etunimi että sukunimi.",
+    photoTypeError: "Valitse JPG-, PNG- tai WebP-kuva.",
+    photoSizeError: "Kuvan on oltava enintään 5 Mt.",
+    loginError: "Kirjautuminen epäonnistui.",
+    signupError: "Tilin luonti epäonnistui.",
+    resetError: "Palautussähköpostin lähetys epäonnistui.",
+    passwordUpdateError: "Salasanan päivitys epäonnistui.",
+    saveError: "Profiilin tallennus epäonnistui.",
+    accountCreated: "Tili luotu ja kirjauduttu sisään.",
+    photoBucketError: "Lataus onnistui, mutta kuva ei ole saatavilla ({status}). Varmista, että 'avatars'-säilö on asetettu julkiseksi Supabasessa."
+  }
+};
+function T(key) { return (STRINGS[currentLang] && STRINGS[currentLang][key]) || STRINGS.en[key] || key; }
+
+function applyLanguage() {
+  document.documentElement.lang = currentLang;
+  document.title = T("pageTitle") + " — Route Tracker";
+
+  document.getElementById("pageTitle").textContent = T("pageTitle");
+  document.getElementById("loadingView").textContent = T("loading");
+
+  document.getElementById("tabLogin").textContent = T("loginTab");
+  document.getElementById("tabSignup").textContent = T("signupTab");
+
+  document.getElementById("loginEmailLabel").textContent = T("email");
+  document.getElementById("loginPasswordLabel").textContent = T("password");
+  document.getElementById("loginBtn").textContent = T("loginBtn");
+  document.getElementById("forgotLink").textContent = T("forgotLink");
+
+  document.getElementById("signupEmailLabel").textContent = T("email");
+  document.getElementById("signupPasswordLabel").textContent = T("password");
+  document.getElementById("signupHint").textContent = T("signupHint");
+  document.getElementById("signupBtn").textContent = T("signupBtn");
+
+  document.getElementById("forgotHint").textContent = T("forgotHint");
+  document.getElementById("forgotEmailLabel").textContent = T("email");
+  document.getElementById("forgotBtn").textContent = T("sendResetBtn");
+  document.getElementById("backToLoginLink").textContent = T("backToLogin");
+
+  document.getElementById("confirmTitle").textContent = T("checkEmailTitle");
+  // Rebuild confirm text with current email
+  const confirmEmailEl = document.getElementById("confirmEmail");
+  const emailVal = confirmEmailEl ? confirmEmailEl.textContent : "";
+  const confirmTextEl = document.getElementById("confirmText");
+  if (confirmTextEl) {
+    // Preserve the strong email element inside
+    confirmTextEl.innerHTML = T("checkEmailText").replace("{email}", '<strong id="confirmEmail"></strong>');
+    const ce = document.getElementById("confirmEmail");
+    if (ce) ce.textContent = emailVal;
+  }
+  document.getElementById("backToLoginBtn").textContent = T("backToLogin");
+
+  document.getElementById("uploadLabel").childNodes[0].nodeValue = T("changePhoto") + " ";
+  document.getElementById("photoHint").textContent = T("photoHint");
+  document.getElementById("firstNameLabel").textContent = T("firstName");
+  document.getElementById("lastNameLabel").textContent = T("surname");
+  document.getElementById("emailLabel").textContent = T("email");
+  document.getElementById("saveBtn").textContent = T("saveChanges");
+  document.getElementById("logoutBtn").textContent = T("logOut");
+
+  document.getElementById("recoveryHint").textContent = T("recoveryHint");
+  document.getElementById("newPasswordLabel").textContent = T("newPassword");
+  document.getElementById("newPassword2Label").textContent = T("confirmPassword");
+  document.getElementById("recoveryBtn").textContent = T("updatePassword");
+
+  // Update subtitle depending on current view
+  const sub = document.getElementById("pageSub");
+  if (document.getElementById("recoveryView").style.display === "block") sub.textContent = T("subtitleRecovery");
+  else if (document.getElementById("signedInView").style.display === "block") sub.textContent = T("subtitleSignedIn");
+  else sub.textContent = T("subtitleSignedOut");
+}
+
 let user = null;
 let avatarUrl = null;
 let pendingPhoto = null;
@@ -232,10 +403,6 @@ let recoveryPending = (window.location.hash || "").includes("type=recovery");
 function goBack() {
   if (history.length > 1) history.back();
   else window.location.href = "index.html";
-}
-
-function setPageSub(text) {
-  document.getElementById("pageSub").textContent = text;
 }
 
 function setAuthMode(mode) {
@@ -274,17 +441,17 @@ async function doLogin() {
   const email = document.getElementById("loginEmail").value.trim();
   const password = document.getElementById("loginPassword").value;
   setStatus("loginStatus", "", "");
-  if (!validEmail(email)) { setStatus("loginStatus", "Enter a valid email address.", "err"); return; }
-  if (!password) { setStatus("loginStatus", "Enter your password.", "err"); return; }
+  if (!validEmail(email)) { setStatus("loginStatus", T("emailInvalid"), "err"); return; }
+  if (!password) { setStatus("loginStatus", T("passwordRequired"), "err"); return; }
   const btn = document.getElementById("loginBtn");
   btn.disabled = true;
   try {
     const { error } = await sb.auth.signInWithPassword({ email, password });
     if (error) throw error;
-    setStatus("loginStatus", "Signed in.", "ok");
+    setStatus("loginStatus", T("signedIn"), "ok");
     document.getElementById("loginPassword").value = "";
   } catch (e) {
-    setStatus("loginStatus", e.message || "Could not log in.", "err");
+    setStatus("loginStatus", e.message || T("loginError"), "err");
   } finally {
     btn.disabled = false;
   }
@@ -294,8 +461,8 @@ async function doSignup() {
   const email = document.getElementById("signupEmail").value.trim();
   const password = document.getElementById("signupPassword").value;
   setStatus("signupStatus", "", "");
-  if (!validEmail(email)) { setStatus("signupStatus", "Enter a valid email address.", "err"); return; }
-  if (password.length < 6) { setStatus("signupStatus", "Password must be at least 6 characters.", "err"); return; }
+  if (!validEmail(email)) { setStatus("signupStatus", T("emailInvalid"), "err"); return; }
+  if (password.length < 6) { setStatus("signupStatus", T("passwordTooShort"), "err"); return; }
   const btn = document.getElementById("signupBtn");
   btn.disabled = true;
   try {
@@ -309,14 +476,20 @@ async function doSignup() {
     });
     if (error) throw error;
     if (data.session) {
-      setStatus("signupStatus", "Account created and signed in.", "ok");
+      setStatus("signupStatus", T("accountCreated"), "ok");
     } else {
-      document.getElementById("confirmEmail").textContent = email;
+      const confirmEmailEl = document.getElementById("confirmEmail");
+      if (confirmEmailEl) confirmEmailEl.textContent = email;
+      // Rebuild confirm text to reflect current language + email
+      const confirmTextEl = document.getElementById("confirmText");
+      confirmTextEl.innerHTML = T("checkEmailText").replace("{email}", '<strong id="confirmEmail"></strong>');
+      const ce = document.getElementById("confirmEmail");
+      if (ce) ce.textContent = email;
       document.getElementById("authForms").style.display = "none";
       document.getElementById("confirmView").style.display = "block";
     }
   } catch (e) {
-    setStatus("signupStatus", e.message || "Could not create account.", "err");
+    setStatus("signupStatus", e.message || T("signupError"), "err");
   } finally {
     btn.disabled = false;
   }
@@ -325,17 +498,17 @@ async function doSignup() {
 async function doForgot() {
   const email = document.getElementById("forgotEmail").value.trim();
   setStatus("forgotStatus", "", "");
-  if (!validEmail(email)) { setStatus("forgotStatus", "Enter a valid email address.", "err"); return; }
+  if (!validEmail(email)) { setStatus("forgotStatus", T("emailInvalid"), "err"); return; }
   const btn = document.getElementById("forgotBtn");
   btn.disabled = true;
   try {
     const redirectTo = new URL("account.html", window.location.href).href;
     const { error } = await sb.auth.resetPasswordForEmail(email, { redirectTo });
     if (error) throw error;
-    setStatus("forgotStatus", "Reset link sent. Check your email.", "ok");
+    setStatus("forgotStatus", T("resetSent"), "ok");
     document.getElementById("forgotEmail").value = "";
   } catch (e) {
-    setStatus("forgotStatus", e.message || "Could not send reset email.", "err");
+    setStatus("forgotStatus", e.message || T("resetError"), "err");
   } finally {
     btn.disabled = false;
   }
@@ -345,15 +518,15 @@ async function saveNewPassword() {
   const p1 = document.getElementById("newPassword").value;
   const p2 = document.getElementById("newPassword2").value;
   setStatus("recoveryStatus", "", "");
-  if (p1.length < 6) { setStatus("recoveryStatus", "Password must be at least 6 characters.", "err"); return; }
-  if (p1 !== p2) { setStatus("recoveryStatus", "Passwords do not match.", "err"); return; }
+  if (p1.length < 6) { setStatus("recoveryStatus", T("passwordTooShort"), "err"); return; }
+  if (p1 !== p2) { setStatus("recoveryStatus", T("passwordsMismatch"), "err"); return; }
   const btn = document.getElementById("recoveryBtn");
   btn.disabled = true;
   try {
     const { error } = await sb.auth.updateUser({ password: p1 });
     if (error) throw error;
     recoveryPending = false;
-    setStatus("recoveryStatus", "Password updated. You're now signed in.", "ok");
+    setStatus("recoveryStatus", T("passwordUpdated"), "ok");
     document.getElementById("newPassword").value = "";
     document.getElementById("newPassword2").value = "";
     if (!user) {
@@ -367,7 +540,7 @@ async function saveNewPassword() {
       else showSignedOut();
     }, 800);
   } catch (e) {
-    setStatus("recoveryStatus", e.message || "Could not update password.", "err");
+    setStatus("recoveryStatus", e.message || T("passwordUpdateError"), "err");
   } finally {
     btn.disabled = false;
   }
@@ -395,26 +568,26 @@ document.getElementById("photoInput").addEventListener("change", (e) => {
   const f = e.target.files ? e.target.files[0] : null;
   if (!f) return;
   if (!["image/jpeg", "image/png", "image/webp"].includes(f.type)) {
-    setStatus("profileStatus", "Please choose a JPG, PNG or WebP image.", "err");
+    setStatus("profileStatus", T("photoTypeError"), "err");
     e.target.value = ""; return;
   }
   if (f.size > 5 * 1024 * 1024) {
-    setStatus("profileStatus", "The image must be 5 MB or smaller.", "err");
+    setStatus("profileStatus", T("photoSizeError"), "err");
     e.target.value = ""; return;
   }
   pendingPhoto = f;
   showAvatar(URL.createObjectURL(f), document.getElementById("firstName").value + " " + document.getElementById("lastName").value);
-  setStatus("profileStatus", "Photo selected. Save changes to upload it.", "");
+  setStatus("profileStatus", T("photoSelected"), "");
 });
 
 async function saveProfile() {
   const first = document.getElementById("firstName").value.trim();
   const last = document.getElementById("lastName").value.trim();
   setStatus("profileStatus", "", "");
-  if (!first || !last) { setStatus("profileStatus", "Enter both your first name and surname.", "err"); return; }
+  if (!first || !last) { setStatus("profileStatus", T("nameRequired"), "err"); return; }
   const btn = document.getElementById("saveBtn");
   btn.disabled = true;
-  setStatus("profileStatus", "Saving…", "");
+  setStatus("profileStatus", T("saving"), "");
   try {
     let nextAvatar = avatarUrl;
     if (pendingPhoto) {
@@ -427,11 +600,9 @@ async function saveProfile() {
       const { data } = sb.storage.from("avatars").getPublicUrl(path);
       nextAvatar = data.publicUrl + "?v=" + Date.now();
 
-      // Verify the public URL is actually reachable so we don't silently
-      // save a broken URL when the bucket is private.
       const probe = await fetch(nextAvatar, { method: "HEAD" }).catch(() => null);
       if (!probe || !probe.ok) {
-        throw new Error("Upload succeeded but the image isn't reachable (" + (probe ? probe.status : "network error") + "). Make sure the 'avatars' storage bucket is set to Public in Supabase.");
+        throw new Error(T("photoBucketError").replace("{status}", probe ? String(probe.status) : "network error"));
       }
     }
     const fullName = first + " " + last;
@@ -445,27 +616,21 @@ async function saveProfile() {
     pendingPhoto = null;
     showAvatar(avatarUrl, fullName);
     document.getElementById("displayName").textContent = fullName;
-    setStatus("profileStatus", "Profile saved.", "ok");
+    setStatus("profileStatus", T("profileSaved"), "ok");
   } catch (e) {
-    setStatus("profileStatus", e.message || "Could not save your profile.", "err");
+    setStatus("profileStatus", e.message || T("saveError"), "err");
   } finally {
     btn.disabled = false;
   }
 }
 
 async function signOut() {
-  setStatus("profileStatus", "Signing out…", "");
-
-  // Try the normal sign-out first; a stale token can make the API error out
-  // ("Auth session missing!"), which is harmless — we still wipe local state.
+  setStatus("profileStatus", T("signingOut"), "");
   try {
     await sb.auth.signOut({ scope: "local" });
   } catch (e) {
     console.warn("Sign out API reported an error (ignored):", e && e.message);
   }
-
-  // Belt-and-braces: clear anything Supabase cached locally, in case the
-  // API call couldn't reach the server or the token was already gone.
   try {
     const projectRef = new URL(SUPABASE_URL).hostname.split(".")[0];
     localStorage.removeItem("sb-" + projectRef + "-auth-token");
@@ -485,7 +650,7 @@ function showRecoveryView() {
   document.getElementById("signedOutView").style.display = "none";
   document.getElementById("signedInView").style.display = "none";
   document.getElementById("recoveryView").style.display = "block";
-  setPageSub("Set a new password");
+  document.getElementById("pageSub").textContent = T("subtitleRecovery");
 }
 
 function showSignedOut() {
@@ -496,7 +661,7 @@ function showSignedOut() {
   document.getElementById("authForms").style.display = "block";
   document.getElementById("confirmView").style.display = "none";
   setAuthMode("login");
-  setPageSub("Sign in or create an account");
+  document.getElementById("pageSub").textContent = T("subtitleSignedOut");
 }
 
 async function showSignedIn() {
@@ -512,7 +677,7 @@ async function showSignedIn() {
   document.getElementById("signedOutView").style.display = "none";
   document.getElementById("recoveryView").style.display = "none";
   document.getElementById("signedInView").style.display = "block";
-  setPageSub("Your profile details");
+  document.getElementById("pageSub").textContent = T("subtitleSignedIn");
 
   let displayName = "", avatar = null;
   try {
@@ -530,7 +695,7 @@ async function showSignedIn() {
   document.getElementById("lastName").value = last;
   document.getElementById("profileEmail").textContent = user.email || "";
   document.getElementById("displayEmail").textContent = user.email || "";
-  document.getElementById("displayName").textContent = displayName || "Your profile";
+  document.getElementById("displayName").textContent = displayName || T("yourProfile");
   avatarUrl = avatar;
   pendingPhoto = null;
   showAvatar(avatar, displayName);
@@ -556,6 +721,7 @@ sb.auth.onAuthStateChange((event, session) => {
 });
 
 (async function init() {
+  applyLanguage();
   if (recoveryPending) { showRecoveryView(); return; }
   try {
     const { data: { session }, error } = await sb.auth.getSession();
