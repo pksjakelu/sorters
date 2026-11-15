@@ -52,7 +52,6 @@
   .back-btn:active { opacity: 0.6; }
   .page-title { font-size: 24px; font-weight: 700; margin: 0; letter-spacing: -0.01em; }
   .page-sub { font-size: 13px; color: var(--text-muted); margin-top: 2px; }
-  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 20px; margin-bottom: 14px; box-shadow: var(--shadow); }
   .field-label { font-size: 12px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.03em; display: block; margin-bottom: 6px; }
   input[type="text"], input[type="email"], input[type="password"] {
     width: 100%; padding: 12px 14px; border-radius: 10px; border: 1px solid var(--border);
@@ -208,7 +207,7 @@
   </div>
 
   <!-- PASSWORD RECOVERY -->
-  <div id="recoveryView" class="card" style="display:none;">
+  <div id="recoveryView" style="display:none;">
     <div class="hint" style="margin-top:0; margin-bottom:16px;">Enter a new password for your account.</div>
     <label class="field-label">New password</label>
     <input type="password" id="newPassword" placeholder="••••••••" autocomplete="new-password">
@@ -427,6 +426,13 @@ async function saveProfile() {
       if (upErr) throw upErr;
       const { data } = sb.storage.from("avatars").getPublicUrl(path);
       nextAvatar = data.publicUrl + "?v=" + Date.now();
+
+      // Verify the public URL is actually reachable so we don't silently
+      // save a broken URL when the bucket is private.
+      const probe = await fetch(nextAvatar, { method: "HEAD" }).catch(() => null);
+      if (!probe || !probe.ok) {
+        throw new Error("Upload succeeded but the image isn't reachable (" + (probe ? probe.status : "network error") + "). Make sure the 'avatars' storage bucket is set to Public in Supabase.");
+      }
     }
     const fullName = first + " " + last;
     const { error } = await sb.from("profiles").upsert({
@@ -466,13 +472,11 @@ async function signOut() {
     localStorage.removeItem("sb-" + projectRef + "-auth-token-code-verifier");
   } catch (e) { /* ignore */ }
 
-  // Clear in-memory state so nothing in the UI can show a stale "signed in".
   user = null;
   avatarUrl = null;
   pendingPhoto = null;
   recoveryPending = false;
 
-  // Hard-navigate home; index.html will re-evaluate the (now empty) session.
   window.location.href = "index.html";
 }
 
