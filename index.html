@@ -190,46 +190,48 @@
   .manual-panel { display: flex; flex-direction: column; gap: 8px; margin: 8px 0 4px; padding: 12px; border: 1.5px dashed var(--border); border-radius: 12px; }
   .manual-panel select { width: 100%; }
 
-  .selected-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+.selected-tags {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    margin-top: 10px;
+  }
   .done-chip {
     position: relative;
     display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
+    align-items: stretch;
     background: var(--sel, #ffc9e1);
     border-radius: 12px;
-    padding: 10px 24px 10px 14px;
-    min-width: 118px;
+    padding: 12px 14px;
+    min-height: 76px;
+    width: 100%;
+    box-sizing: border-box;
   }
   .done-chip .dc-route {
+    flex: 1;
+    min-width: 0;
     display: flex;
     flex-direction: column;
+    justify-content: center;
     align-items: center;
-    line-height: 1.1;
+    gap: 2px;
+    padding-right: 10px;
   }
-  .done-chip .rc-name { color: #1a1a1a; font-size: 18px; font-weight: 700; white-space: nowrap; }
-  .done-chip .rc-code { color: rgba(0,0,0,0.6); font-size: 11px; margin-top: 2px; }
   .done-chip .dc-meta {
+    flex: 1;
+    min-width: 0;
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
+    justify-content: center;
+    align-items: center;
     gap: 2px;
+    border-left: 1px solid rgba(0,0,0,0.22);
+    padding-left: 10px;
   }
-  .done-chip .rc-boxes {
-    color: rgba(0,0,0,0.85);
-    font-size: 13px;
-    font-weight: 700;
-    line-height: 1;
-    white-space: nowrap;
-  }
-  .done-chip .rc-dur {
-    color: rgba(0,0,0,0.55);
-    font-size: 11px;
-    line-height: 1;
-    white-space: nowrap;
-  }
+  .done-chip .rc-name { color: #1a1a1a; font-size: 18px; font-weight: 700; line-height: 1.1; white-space: nowrap; }
+  .done-chip .rc-code { color: rgba(0,0,0,0.6); font-size: 11px; line-height: 1.1; white-space: nowrap; }
+  .done-chip .rc-boxes { color: #1a1a1a; font-size: 18px; font-weight: 700; line-height: 1.1; white-space: nowrap; }
+  .done-chip .rc-dur { color: rgba(0,0,0,0.6); font-size: 11px; line-height: 1.1; white-space: nowrap; }
   .done-x {
     position: absolute; top: 3px; right: 3px; width: 18px; height: 18px; border-radius: 50%;
     border: none; background: rgba(0,0,0,0.16); color: #1a1a1a; font-size: 13px; line-height: 1;
